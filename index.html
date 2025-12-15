@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PDF & Network Tools</title>
+  <meta name="description" content="Free online PDF tools and network utilities - Merge, Split, Rotate, Compress PDFs, IP Validator, Subnet Checker. 100% browser-based.">
+  <meta name="keywords" content="PDF tools, PDF merge, PDF split, rotate PDF, PDF compress, IP checker, subnet calculator, online PDF tools">
+  <meta name="author" content="Azam Sultan">
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- PDF-lib and IP library -->
+  <script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
+  <script src="https://unpkg.com/ipaddr.js/ipaddr.min.js"></script>
+
+</head>
+<body class="bg-gray-100 font-sans">
+
+<header class="bg-gray-800 text-white p-6 text-center">
+  <h1 class="text-3xl font-bold">PDF & Network Tools</h1>
+  <p class="mt-2">All tools work 100% in your browser (No Uploads)</p>
+</header>
+
+<div class="container mx-auto px-4 py-6">
+
+  <!-- Advertisement Top -->
+  <div class="bg-yellow-100 border-2 border-yellow-400 p-4 text-center mb-6">
+    <strong>Advertisement Space</strong><br>
+    <small>Google AdSense / Affiliate Banner</small>
+  </div>
+
+  <!-- Tools Grid -->
+  <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+    <!-- Merge PDFs -->
+    <div class="bg-white p-4 rounded shadow">
+      <h2 class="text-xl font-semibold mb-2">📄 Merge PDFs</h2>
+      <input type="file" id="mergeFiles" multiple accept="application/pdf" class="mb-2 w-full"/>
+      <button onclick="mergePDFs()" class="bg-blue-600 text-white w-full py-2 rounded hover:bg-blue-700">Merge PDFs</button>
+    </div>
+
+    <!-- Split PDFs -->
+    <div class="bg-white p-4 rounded shadow">
+      <h2 class="text-xl font-semibold mb-2">✂️ Split PDF</h2>
+      <input type="file" id="splitFile" accept="application/pdf" class="mb-2 w-full"/>
+      <input type="text" id="pageRange" placeholder="Example: 1-3" class="mb-2 w-full p-1 border rounded"/>
+      <button onclick="splitPDF()" class="bg-blue-600 text-white w-full py-2 rounded hover:bg-blue-700">Split PDF</button>
+    </div>
+
+    <!-- Rotate PDF -->
+    <div class="bg-white p-4 rounded shadow">
+      <h2 class="text-xl font-semibold mb-2">🔄 Rotate PDF</h2>
+      <input type="file" id="rotateFile" accept="application/pdf" class="mb-2 w-full"/>
+      <select id="rotateAngle" class="mb-2 w-full p-1 border rounded">
+        <option value="90">90°</option>
+        <option value="180">180°</option>
+        <option value="270">270°</option>
+      </select>
+      <button onclick="rotatePDF()" class="bg-blue-600 text-white w-full py-2 rounded hover:bg-blue-700">Rotate PDF</button>
+    </div>
+
+    <!-- Add Border -->
+    <div class="bg-white p-4 rounded shadow">
+      <h2 class="text-xl font-semibold mb-2">⬛ Add Border</h2>
+      <input type="file" id="borderFile" accept="application/pdf" class="mb-2 w-full"/>
+      <button onclick="addBorder()" class="bg-blue-600 text-white w-full py-2 rounded hover:bg-blue-700">Add Border</button>
+    </div>
+
+    <!-- Compress PDF -->
+    <div class="bg-white p-4 rounded shadow">
+      <h2 class="text-xl font-semibold mb-2">📉 Compress PDF</h2>
+      <input type="file" id="compressFile" accept="application/pdf" class="mb-2 w-full"/>
+      <button onclick="compressPDF()" class="bg-blue-600 text-white w-full py-2 rounded hover:bg-blue-700">Compress PDF</button>
+    </div>
+
+    <!-- Lock / Watermark -->
+    <div class="bg-white p-4 rounded shadow">
+      <h2 class="text-xl font-semibold mb-2">🔒 Lock / Watermark</h2>
+      <input type="file" id="lockFile" accept="application/pdf" class="mb-2 w-full"/>
+      <input type="text" id="watermarkText" placeholder="Watermark Text" class="mb-2 w-full p-1 border rounded"/>
+      <button onclick="addWatermark()" class="bg-blue-600 text-white w-full py-2 rounded hover:bg-blue-700">Apply</button>
+    </div>
+
+    <!-- PDF Info / Metadata -->
+    <div class="bg-white p-4 rounded shadow">
+      <h2 class="text-xl font-semibold mb-2">ℹ️ PDF Info / Metadata</h2>
+      <input type="file" id="infoFile" accept="application/pdf" class="mb-2 w-full"/>
+      <button onclick="viewInfo()" class="bg-blue-600 text-white w-full py-2 rounded hover:bg-blue-700">View Info</button>
+      <div id="infoResult" class="mt-2 font-bold"></div>
+    </div>
+
+    <!-- PDF Page Counter -->
+    <div class="bg-white p-4 rounded shadow">
+      <h2 class="text-xl font-semibold mb-2">📑 Page Counter</h2>
+      <input type="file" id="countFile" accept="application/pdf" class="mb-2 w-full"/>
+      <button onclick="countPages()" class="bg-blue-600 text-white w-full py-2 rounded hover:bg-blue-700">Count Pages</button>
+      <div id="countResult" class="mt-2 font-bold"></div>
+    </div>
+
+    <!-- Image to PDF -->
+    <div class="bg-white p-4 rounded shadow">
+      <h2 class="text-xl font-semibold mb-2">🖼️ Image to PDF</h2>
+      <input type="file" id="imagesFile" accept="image/*" multiple class="mb-2 w-full"/>
+      <button onclick="imagesToPDF()" class="bg-blue-600 text-white w-full py-2 rounded hover:bg-blue-700">Convert</button>
+    </div>
+
+    <!-- PDF to Image -->
+    <div class="bg-white p-4 rounded shadow">
+      <h2 class="text-xl font-semibold mb-2">📷 PDF to Image</h2>
+      <input type="file" id="pdfToImageFile" accept="application/pdf" class="mb-2 w-full"/>
+      <button onclick="pdfToImage()" class="bg-blue-600 text-white w-full py-2 rounded hover:bg-blue-700">Convert</button>
+    </div>
+
+    <!-- IP Validator -->
+    <div class="bg-white p-4 rounded shadow">
+      <h2 class="text-xl font-semibold mb-2">🌐 IP Validator</h2>
+      <input type="text" id="ipInput" placeholder="Enter IP Address" class="mb-2 w-full p-1 border rounded"/>
+      <button onclick="validateIP()" class="bg-blue-600 text-white w-full py-2 rounded hover:bg-blue-700">Check IP</button>
+      <div id="ipResult" class="mt-2 font-bold"></div>
+    </div>
+
+    <!-- Subnet Checker -->
+    <div class="bg-white p-4 rounded shadow">
+      <h2 class="text-xl font-semibold mb-2">🧮 Subnet Checker</h2>
+      <input type="text" id="subnetInput" placeholder="Example: 192.168.1.0/24" class="mb-2 w-full p-1 border rounded"/>
+      <button onclick="checkSubnet()" class="bg-blue-600 text-white w-full py-2 rounded hover:bg-blue-700">Check Subnet</button>
+      <div id="subnetResult" class="mt-2 font-bold"></div>
+    </div>
+
+  </div>
+
+  <!-- Advertisement Bottom -->
+  <div class="bg-yellow-100 border-2 border-yellow-400 p-4 text-center mt-6">
+    <strong>Advertisement Space</strong><br>
+    <small>Google AdSense / Affiliate Banner</small>
+  </div>
+
+</div>
+
+<script>
+  const { PDFDocument, rgb, degrees } = PDFLib;
+
+  function downloadPDF(pdf, name) {
+    pdf.save().then(bytes => {
+      const blob = new Blob([bytes], { type: 'application/pdf' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = name;
+      link.click();
+    });
+  }
+
+  async function mergePDFs() {
+    const files = document.getElementById('mergeFiles').files;
+    if (files.length < 2) return alert('Select at least 2 PDFs');
+    const mergedPdf = await PDFDocument.create();
+    for (let f of files) {
+      const bytes = await f.arrayBuffer();
+      const pdf = await PDFDocument.load(bytes);
+      const pages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
+      pages.forEach(p => mergedPdf.addPage(p));
+    }
+    downloadPDF(mergedPdf, 'merged.pdf');
+  }
+
+  async function splitPDF() {
+    const file = document.getElementById('splitFile').files[0];
+    const range = document.getElementById('pageRange').value;
+    if (!file || !range) return alert('File and range required');
+    const [start, end] = range.split('-').map(n => parseInt(n)-1);
+    const bytes = await file.arrayBuffer();
+    const pdf = await PDFDocument.load(bytes);
+    const newPdf = await PDFDocument.create();
+    const pages = await newPdf.copyPages(pdf, Array.from({length:end-start+1},(_,i)=>i+start));
+    pages.forEach(p => newPdf.addPage(p));
+    downloadPDF(newPdf, 'split.pdf');
+  }
+
+  async function rotatePDF() {
+    const file = document.getElementById('rotateFile').files[0];
+    const angle = parseInt(document.getElementById('rotateAngle').value);
+    if (!file) return alert('Select PDF');
+    const bytes = await file.arrayBuffer();
+    const pdf = await PDFDocument.load(bytes);
+    pdf.getPages().forEach(p => p.setRotation(degrees(angle)));
+    downloadPDF(pdf, 'rotated.pdf');
+  }
+
+  async function addBorder() {
+    const file = document.getElementById('borderFile').files[0];
+    if (!file) return alert('Select PDF');
+    const bytes = await file.arrayBuffer();
+    const pdf = await PDFDocument.load(bytes);
+    pdf.getPages().forEach(page => {
+      const { width, height } = page.getSize();
+      page.drawRectangle({ x:10, y:10, width:width-20, height:height-20, borderColor:rgb(0,0,0), borderWidth:2 });
+    });
+    downloadPDF(pdf, 'bordered.pdf');
+  }
+
+  async function compressPDF() { alert('PDF compression will be added later'); }
+  async function addWatermark() { alert('PDF watermark/lock will be added later'); }
+
+  async function viewInfo() {
+    const file = document.getElementById('infoFile').files[0];
+    if (!file) return alert('Select PDF');
+    const bytes = await file.arrayBuffer();
+    const pdf = await PDFDocument.load(bytes);
+    document.getElementById('infoResult').innerText = `Pages: ${pdf.getPageCount()}`;
+  }
+
+  async function countPages() {
+    const file = document.getElementById('countFile').files[0];
+    if (!file) return alert('Select PDF');
+    const bytes = await file.arrayBuffer();
+    const pdf = await PDFDocument.load(bytes);
+    document.getElementById('countResult').innerText = `Total Pages: ${pdf.getPageCount()}`;
+  }
+
+  function validateIP() {
+    const ip = document.getElementById('ipInput').value;
+    document.getElementById('ipResult').innerText = ipaddr.isValid(ip) ? 'Valid IP Address' : 'Invalid IP Address';
+  }
+
+  function checkSubnet() {
+    const input = document.getElementById('subnetInput').value;
+    try {
+      const subnet = ipaddr.parseCIDR(input);
+      document.getElementById('subnetResult').innerText = `Network: ${subnet[0].toString()} / ${subnet[1]}`;
+    } catch {
+      document.getElementById('subnetResult').innerText = 'Invalid Subnet';
+    }
+  }
+
+  async function imagesToPDF() { alert('Image to PDF conversion will be added later'); }
+  async function pdfToImage() { alert('PDF to Image conversion will be added later'); }
+
+</script>
+</body>
+</html>
