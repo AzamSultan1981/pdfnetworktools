@@ -17,7 +17,12 @@
 
 </head>
 <body class="bg-gray-100 font-sans">
+<script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://unpkg.com/ipaddr.js/ipaddr.min.js"></script>
+
+
+
 
 
 <header class="bg-gray-800 text-white p-6 text-center">
@@ -241,56 +246,44 @@
     }
   }
 
-  async function imagesToPDF() { alert('Image to PDF conversion will be added later'); }
-  <script>
-  async function pdfToImage() {
-    const file = document.getElementById('pdfToImageFile').files[0];
-    if (!file) {
-      alert('Please select a PDF file');
-      return;
+ <script>
+async function imagesToPDF() {
+  const files = document.getElementById('imagesFile').files;
+  if (!files.length) return alert('Select at least one image');
+
+  const pdfDoc = await PDFLib.PDFDocument.create();
+
+  for (const imgFile of files) {
+    const imgBytes = await imgFile.arrayBuffer();
+    let img;
+
+    if (imgFile.type.includes('png')) {
+      img = await pdfDoc.embedPng(imgBytes);
+    } else {
+      img = await pdfDoc.embedJpg(imgBytes);
     }
 
-    const output = document.getElementById('imageOutput');
-    output.innerHTML = 'Converting pages...';
-
-    const reader = new FileReader();
-    reader.readAsArrayBuffer(file);
-
-    reader.onload = async function () {
-      const typedArray = new Uint8Array(reader.result);
-      const pdf = await pdfjsLib.getDocument(typedArray).promise;
-
-      output.innerHTML = '';
-
-      for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
-        const page = await pdf.getPage(pageNum);
-        const viewport = page.getViewport({ scale: 2 });
-
-        const canvas = document.createElement('canvas');
-        const context = canvas.getContext('2d');
-        canvas.height = viewport.height;
-        canvas.width = viewport.width;
-
-        await page.render({ canvasContext: context, viewport }).promise;
-
-        const img = document.createElement('img');
-        img.src = canvas.toDataURL('image/png');
-        img.className = 'border rounded shadow';
-
-        const downloadLink = document.createElement('a');
-        downloadLink.href = img.src;
-        downloadLink.download = `page-${pageNum}.png`;
-        downloadLink.innerText = `Download Page ${pageNum}`;
-        downloadLink.className = 'block text-blue-600 underline mt-1';
-
-        output.appendChild(img);
-        output.appendChild(downloadLink);
-      }
-    };
+    const page = pdfDoc.addPage([img.width, img.height]);
+    page.drawImage(img, {
+      x: 0,
+      y: 0,
+      width: img.width,
+      height: img.height,
+    });
   }
+
+  const pdfBytes = await pdfDoc.save();
+  const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = 'images-to-pdf.pdf';
+  link.click();
+}
 </script>
+
 
 </script>
 </body>
 </html>
+
 
